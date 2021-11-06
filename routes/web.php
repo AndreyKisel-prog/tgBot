@@ -12,5 +12,7 @@
 */
 
 use App\Http\Controllers\UrlController;
+use App\Http\Controllers\HomeController;
 
+Route::get('/', [HomeController::class, 'index']);
 Route::get('/{id}', [UrlController::class, 'redirect']);
