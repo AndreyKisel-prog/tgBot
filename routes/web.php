@@ -10,6 +10,7 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/', function (){
-    return 'SEf';
-});
+
+use App\Http\Controllers\UrlController;
+
+Route::get('/{id}', [UrlController::class, 'redirect']);
