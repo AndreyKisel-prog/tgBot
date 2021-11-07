@@ -13,11 +13,13 @@ use App\Services\UrlService;
 
 class UrlController extends Controller
 {
+    public function __construct(private UrlService $urlService) {}
+
     /**
      * @param string $id
      * @return RedirectResponse|Response
      */
-    public function redirect(string $id)
+    public function redirect(string $id): Response|RedirectResponse
     {
         $url = Url::whereId($id)->first();
 
@@ -32,8 +34,8 @@ class UrlController extends Controller
      * @param UrlRequest $request
      * @return Application|ResponseFactory|Response
      */
-    public function create(UrlRequest $request)
+    public function create(UrlRequest $request): Response|Application|ResponseFactory
     {
-        return response(UrlService::getShortUrl($request->url));
+        return response($this->urlService->getShortUrl($request->url));
     }
 }

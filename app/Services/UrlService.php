@@ -11,7 +11,7 @@ class UrlService
      * @param string $url
      * @return string
      */
-    public static function getShortUrl(string $url): string
+    public function getShortUrl(string $url): string
     {
         $uuid = (string) Str::uuid();
 
@@ -20,15 +20,15 @@ class UrlService
             ['id' => $uuid, 'url' => $url]
         );
 
-        return self::generateShortUrl($urlModel->id);
+        return $this->generateShortUrl($urlModel->id);
     }
 
     /**
      * @param string $uuid
      * @return string
      */
-    private static function generateShortUrl(string $uuid): string
+    private function generateShortUrl(string $uuid): string
     {
-        return url('/') . '/' . $uuid;
+        return config('app.url') . $uuid;
     }
 }

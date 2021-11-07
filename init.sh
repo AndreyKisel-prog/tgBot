@@ -1,4 +1,14 @@
 #!/bin/bash
-composer install
-chmod 777 -R storage/
-chmod 777 -R pg_data/
+
+docker-compose up -d
+
+docker-compose exec php-fpm composer install
+
+docker-compose exec php-fpm chmod 777 -R storage/
+docker-compose exec php-fpm chmod 777 -R pg_data/
+
+docker-compose exec php-fpm cp .env.example .env
+docker-compose exec php-fpm php artisan key:generate
+
+npm i
+npm run prod
