@@ -16,4 +16,3 @@ use App\Http\Controllers\HomeController;
 
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/{id}', [UrlController::class, 'redirect'])->whereUuid('id');
-

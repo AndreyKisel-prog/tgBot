@@ -24,4 +24,7 @@ class Url extends Model
     use HasFactory;
 
     protected $fillable = ['id', 'url'];
+    protected $keyType = 'string';
+
+    public $timestamps = false;
 }
