@@ -11,8 +11,26 @@
 |
 */
 
-use App\Http\Controllers\UrlController;
-use App\Http\Controllers\HomeController;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Route;
 
-Route::get('/', [HomeController::class, 'index']);
-Route::get('/{id}', [UrlController::class, 'redirect'])->whereUuid('id');
+Route::get('/setWebhook', function () {
+    $http = Http::get(
+        env('BASE_BOT_URL')
+        . env('TG_BOT_TOKEN')
+        . '/setWebHook?url='
+        . env('NGROK_URL')
+        . '/api/webhook?allowed_updates=["message"]'
+    );
+    dd(json_decode($http));
+});
+
+Route::get('/deleteWebhook', function () {
+    $http = Http::get(
+        env('BASE_BOT_URL')
+        . env('TG_BOT_TOKEN')
+        . '/deleteWebHook?drop_pending_updates=true');
+    dd(json_decode($http));
+});
+
+
