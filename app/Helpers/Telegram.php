@@ -32,6 +32,7 @@ class Telegram
             [
                 'chat_id' => $chat_id,
                 'text' => $message,
+                'parse_mode' => 'html',
                 'reply_markup' => $button
             ]
         );

@@ -4,6 +4,7 @@ namespace App\Objects\Message;
 
 use App\Objects\MessageText\MessageTextToSend;
 use App\Repositories\Users\UserRepository;
+use App\Objects\Commands\ChangeRadiusSearchCommand;
 
 class UserLocationMessageHandler extends BaseMessageHandler
 {
@@ -14,6 +15,9 @@ class UserLocationMessageHandler extends BaseMessageHandler
         $repository->updateUserLocation($user, $this->data);
 
         $message = MessageTextToSend::MESSAGE_TEXT_TYPES['locationSentReply'];
-        return $this->telegram()->sendMessage($this->data['chat_id'], $message);
+        $this->telegram()->sendMessage($this->data['chat_id'], $message);
+        $message = MessageTextToSend::MESSAGE_TEXT_TYPES['radiusNeed'];
+
+//        (new ChangeRadiusSearchCommand())->handle();
     }
 }

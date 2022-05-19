@@ -6,7 +6,7 @@ use App\Objects\KeyBoard\KeyBoard;
 use App\Objects\MessageText\MessageTextToSend;
 use Illuminate\Support\Facades\Log;
 
-class StartCommand extends BaseCommand
+class UpdateLocationCommand extends BaseCommand
 {
 
     public $keyboard;
@@ -19,13 +19,10 @@ class StartCommand extends BaseCommand
 
     public function handle()
     {
-        Log::info('StartCommand');
-        $message = MessageTextToSend::MESSAGE_TEXT_TYPES['greeting']
-            . $this->data['userName']
-            . MessageTextToSend::MESSAGE_TEXT_TYPES['intro'];
+        $message = MessageTextToSend::MESSAGE_TEXT_TYPES['locationNeed'];
         // получаем обьект настроек отправляемой кнопки
         $inlineKeyboardMarkup = $this->keyboard->getReplyKeyboardMarkup($this->keyboard->getKeyboardWithRequestLocation());
-        // отправляем приветственное сообщение с кнопкой отправки геолокации
+        // отправляем сообщение с кнопкой отправки геолокации
         $this->telegram()->sendButtons($this->data['chat_id'], $message, json_encode($inlineKeyboardMarkup));
     }
 }

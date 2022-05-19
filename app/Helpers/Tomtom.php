@@ -4,7 +4,6 @@ namespace App\Helpers;
 
 use Illuminate\Support\Facades\Http;
 
-
 class Tomtom
 {
     protected $http;
@@ -16,7 +15,7 @@ class Tomtom
         $this->tomtomAPIKey = $tomtomAPIKey;
     }
 
-    public function fetchPOI($latitude, $longitude, $query)
+    public function fetchPOI($latitude, $longitude, $query, $radius = null)
     {
         return $this->http::get(env('BASE_TOMTOM_URL') . $query . '.json',
             [
@@ -26,10 +25,9 @@ class Tomtom
                 'language' => 'ru-Cyrl-RU',
                 'relatedPois' => 'off',
                 'view' => 'Unified',
-//    &radius =
+                'radius' => $radius,
 //    &openingHours=
 //    &timezone=
-            ]
-        );
+            ]);
     }
 }

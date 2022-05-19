@@ -21,14 +21,14 @@ class UserSearchQueryMessageHandler extends BaseMessageHandler
         if (!$user->last_latitude || !$user->last_longitude) {
             $message = MessageTextToSend::MESSAGE_TEXT_TYPES['locationNeed'];
             $keyboard = (new KeyBoard());
-            $inlineKeyboardMarkup = $keyboard->getInlineKeyboardMarkupSettings($keyboard->getKeyboardSettings());
+            $inlineKeyboardMarkup = $keyboard->getReplyKeyboardMarkup($keyboard->getKeyboardWithRequestLocation());
             return $this->telegram()->sendButtons($data['chat_id'], $message, json_encode($inlineKeyboardMarkup));
         }
         // если данные локации есть в БД, то
         //сохраняем в бд ключеовое слово
         $repository->setLastSearchWord($user, $data['messageText']);
         // передаем управление в TomTomService
-        $messages = (new TomtomService())->handle($user->last_latitude, $user->last_longitude, $data['messageText']);
+        $messages = (new TomtomService())->handle($user->last_latitude, $user->last_longitude, $user->last_search_word, $user->last_search_radius);
         foreach ($messages as $item) {
             $this->telegram()->sendMessage($data['chat_id'], $item['message']);
             $this->telegram()->sendLocation($data['chat_id'], $item['latitude'], $item['longitude']);

@@ -19,6 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('last_search_word')->nullable();
             $table->float('last_latitude')->nullable();
             $table->float('last_longitude')->nullable();
+            $table->integer('last_search_radius')->nullable();
             $table->timestamps();
         });
     }

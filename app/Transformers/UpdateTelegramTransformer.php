@@ -2,34 +2,52 @@
 
 namespace App\Transformers;
 
+use Illuminate\Support\Facades\Log;
+
 class UpdateTelegramTransformer extends BaseTransformer
 {
     public $data;
+
     public function __construct($data)
     {
         $this->data = $data;
     }
 
-    public function handle():array
+    public function handle(): array
     {
-        $isMessage = $this->data["message"] ?? null;
-        $messageEntitiesType = $this->data["message"]["entities"][0]['type'] ?? null;
+        // если апдейт мессадж или команда для бота
+        $messageObj = $this->data["message"] ?? null;
+
+        $messageEntitiesType = $messageObj["entities"][0]['type'] ?? null;
         $isBotCommand = $messageEntitiesType === "bot_command";
-        $textBotCommand = $this->data["message"]["text"] ?? null;
-        $userName = $this->data["message"]["chat"]["first_name"] ?? null;
-        $nickName = $this->data["message"]["chat"]["username"] ?? null;
-        $chat_id = $this->data["message"]["chat"]["id"] ?? null;
-        $isMessageSentByBot = $this->data["message"]["from"]["is_bot"] ?? null;
-        $location = $this->data["message"]["location"] ?? null;
+
+        //если апдейт - это callback_query, то есть нажата кнопка inlineKeyboard и возращен вложенный сallback_data
+        $callbackQueryObj = $this->data["callback_query"] ?? null;
+        $callbackData = $callbackQueryObj['data'] ?? null;
+        $callbackQueryTextFromReply = $callbackQueryObj['message']['text'] ?? null;
+
+        $userName = $messageObj["chat"]["first_name"]
+            ?? $callbackQueryObj["from"]["first_name"]
+            ?? null;
+        $nickName = $messageObj["chat"]["username"]
+            ?? $callbackQueryObj["from"]["username"]
+            ?? null;
+
+        $chat_id = $messageObj["chat"]["id"]
+            ?? $callbackQueryObj["message"]["chat"]["id"]
+            ?? null;
+        $isMessageSentByBot = $messageObj["from"]["is_bot"] ?? null;
+
+        $messageText = $messageObj["text"] ?? null;
+        $location = $messageObj["location"] ?? null;
         $latitude = $location["latitude"] ?? null;
         $longitude = $location["longitude"] ?? null;
-        $messageText = $this->data["message"]["text"] ?? null;
 
         return [
-            'isMessage' => $isMessage,
+            'messageObj' => $messageObj,
             'messageEntitiesType' => $messageEntitiesType,
             'isBotCommand' => $isBotCommand,
-            'textBotCommand' => $textBotCommand,
+
             'userName' => $userName,
             'nickName' => $nickName,
             'chat_id' => $chat_id,
@@ -38,6 +56,10 @@ class UpdateTelegramTransformer extends BaseTransformer
             'latitude' => $latitude,
             'longitude' => $longitude,
             'messageText' => $messageText,
+
+            'callbackQueryObj' => $callbackQueryObj,
+            'callbackData' => $callbackData,
+            'callbackQueryTextFromReply' => $callbackQueryTextFromReply,
         ];
     }
 }

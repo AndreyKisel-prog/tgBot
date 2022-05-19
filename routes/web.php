@@ -20,7 +20,7 @@ Route::get('/setWebhook', function () {
         . env('TG_BOT_TOKEN')
         . '/setWebHook?url='
         . env('NGROK_URL')
-        . '/api/webhook?allowed_updates=["message"]'
+        . '/api/webhook?allowed_updates=["message", "callback_query"]'
     );
     dd(json_decode($http));
 });

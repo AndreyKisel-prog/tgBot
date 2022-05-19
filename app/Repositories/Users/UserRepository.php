@@ -3,6 +3,8 @@
 namespace App\Repositories\Users;
 
 use App\Models\User;
+use Exception;
+use Illuminate\Support\Facades\Log;
 
 class UserRepository
 {
@@ -23,4 +25,10 @@ class UserRepository
     {
         return $user->update(['last_search_word' => $searchWord]);
     }
+
+    public function setLastSearchRadius($user, $radius)
+    {
+        return $user->update(['last_search_radius' => $radius]);
+    }
+
 }

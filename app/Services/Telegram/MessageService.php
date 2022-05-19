@@ -13,7 +13,6 @@ class MessageService extends BaseTelegramService
     {
         // если сообщение содержит локацию, то обратываем его как локацию
         // если локации нет, то обрабатываем как простое текстовое сообщение
-        Log::info('MessageService @handle');
         return ($this->data['location'])
             ? (new UserLocationMessageHandler($this->data))->handle()
             : (new UserSearchQueryMessageHandler($this->data))->handle();

@@ -10,10 +10,10 @@ use Illuminate\Support\Facades\Log;
 
 class TomtomService extends BaseService
 {
-    public function handle($latitude, $longitude, $message)
+    public function handle($latitude, $longitude, $message, $radius)
     {
         $tomtom = new Tomtom(new Http(), env('TOMTOM_API_KEY'));
-        $responseTomtom = $tomtom->fetchPOI($latitude, $longitude, $message);
+        $responseTomtom = $tomtom->fetchPOI($latitude, $longitude, $message, $radius);
         return (new TomtomTransformer($responseTomtom))->handle();
     }
 }

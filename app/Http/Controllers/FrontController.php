@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Api\ApiController;
 use Illuminate\Http\Request;
 use App\Services\Telegram\WebhookNewRequestService;
+use Illuminate\Support\Facades\Log;
 
 class FrontController extends ApiController
 {
@@ -18,5 +19,3 @@ class FrontController extends ApiController
         return response()->json(['result' => true], 200);
     }
 }
-
-

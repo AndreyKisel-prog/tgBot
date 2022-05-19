@@ -35,7 +35,8 @@ class User extends Authenticatable
         'user_name',
         'last_search_word',
         'last_latitude',
-        'last_longitude'
+        'last_longitude',
+        'last_search_radius',
     ];
 
     /**
