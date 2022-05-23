@@ -4,6 +4,6 @@ namespace App\Transformers;
 
 abstract class BaseTransformer implements TransformerInterface
 {
-    abstract function handle(): array;
+    abstract public function handle(): array;
 }
 

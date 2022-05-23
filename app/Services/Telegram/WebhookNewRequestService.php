@@ -3,45 +3,64 @@
 namespace App\Services\Telegram;
 
 use App\Transformers\UpdateTelegramTransformer;
-use Illuminate\Support\Facades\Log;
+
 
 class WebhookNewRequestService
 {
-    public $rawUpdate;
     public $data;
-    const COMMAND = 'command';
-    const MESSAGE = 'message';
-    const CALLBACK_DATA = 'callback';
+    public const COMMAND = 'COMMAND';
+    public const MESSAGE = 'MESSAGE';
+    public const CALLBACK_DATA = 'CALLBACK_DATA';
 
-    const WEBHOOK_UPDATE_TYPES = [
-        self::COMMAND => CommandService::class,
-        self::MESSAGE => MessageService::class,
+    public const WEBHOOK_UPDATE_TYPES = [
+        self::COMMAND       => CommandService::class,
+        self::MESSAGE       => MessageService::class,
         self::CALLBACK_DATA => CallbackDataService::class,
     ];
 
+    /**
+     * @param $rawUpdate
+     */
     public function __construct($rawUpdate)
     {
-        $this->rawUpdate = $rawUpdate;
-        $this->data = (new UpdateTelegramTransformer($this->rawUpdate->input()))->handle();
+        $this->data = (new UpdateTelegramTransformer($rawUpdate->input()))->handle();
     }
 
-    public function handle()
+    /**
+     * @return void
+     */
+    public function handle(): void
     {
         $typeUpdate = $this->recognizeTypeUpdate($this->data);
         $this->handleUpdateByType($typeUpdate);
     }
 
-    // выясняем: от юзера пришло сообщение или команда либо иной вариант
-    public function recognizeTypeUpdate($data)
+    /**
+     * выясняем: от юзера пришло сообщение или команда либо иной вариант
+     * @param $data
+     * @return string
+     */
+    private function recognizeTypeUpdate($data): string
     {
-        if ($data['isBotCommand']) return 'command';
-        else if ($data['messageObj']) return 'message';
-        else if ($data['callbackQueryObj']) return 'callback';
+        if ($data['isBotCommand']) {
+            return self::COMMAND;
+        }
+        if ($data['messageObj']) {
+            return self::MESSAGE;
+        }
+        if ($data['callbackQueryObj']) {
+            return self::CALLBACK_DATA;
+        }
+        // TODO: сделать обработку на 'undefined'
         return 'undefined';
     }
 
-// вызываем класс обработчик в зависимости от типа апдейта (месадж, команды)
-    public function handleUpdateByType($typeUpdate)
+    /**
+     * @param string $typeUpdate
+     * @return mixed
+     * // вызываем класс обработчик в зависимости от типа апдейта (месадж, команды)
+     */
+    private function handleUpdateByType(string $typeUpdate)
     {
         $webhook_update_type = self::WEBHOOK_UPDATE_TYPES[$typeUpdate];
         return (new $webhook_update_type($this->data))->handle();

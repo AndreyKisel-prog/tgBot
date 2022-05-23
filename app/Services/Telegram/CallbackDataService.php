@@ -2,21 +2,38 @@
 
 namespace App\Services\Telegram;
 
-use App\Objects\TelegramCallbackDataHandlers\RadiusCallbackDataHandler;
-use Illuminate\Support\Facades\Log;
+use App\Models\User;
+use App\Assets\MessageTextToSend;
 
-class CallbackDataService extends BaseTelegramService
+class CallbackDataService extends BaseService
 {
+    use ProcessTrait;
 
+    /**
+     * @return \Illuminate\Http\Client\Response|int
+     */
     public function handle()
     {
-        Log::info($this->data['callbackQueryTextFromReply']);
-        Log::info(stripos($this->data['callbackQueryTextFromReply'], 'радиус'));
-
-        //если в исходном мессадже с кнопками было слово радиус, то
-        if (stripos($this->data['callbackQueryTextFromReply'], 'радиус') !== false){
-            return (new RadiusCallbackDataHandler($this->data))->handle();
+        //если в исходном мессадже бота с кнопками было слово 'радиус', то
+        if (stripos($this->data['callbackText'], 'радиус') !== false) {
+            return $this->radiusCallbackDataHandle();
         }
         return 1;
+    }
+
+    /**
+     * @return \Illuminate\Http\Client\Response
+     */
+    private function radiusCallbackDataHandle(): \Illuminate\Http\Client\Response
+    {
+        $user         = User::getUser($this->data['nickName']);
+        $callbackData = (int)($this->data['callbackData']);
+        User::setLastSearchRadius(
+            $user,
+            $callbackData
+        );
+        $message = MessageTextToSend::MESSAGE_TEXT_TYPES['radiusSentReply'];
+        return $this->telegram()
+            ->sendMessage($this->data['chatId'], $message);
     }
 }

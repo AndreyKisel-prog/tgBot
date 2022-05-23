@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Helpers\Telegram;
-use App\Helpers\Tomtom;
+use App\Services\Telegram\TelegramApiClient;
+use App\Services\Tomtom\TomtomApiClient;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\ServiceProvider;
 
@@ -16,14 +16,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(Telegram::class, function () {
-            return new Telegram(new Http(), env('TG_BOT_TOKEN'));
+        $this->app->bind(TelegramApiClient::class, function () {
+            return new TelegramApiClient(new Http(), env('TG_BOT_TOKEN'));
         });
 
-        $this->app->bind(Tomtom::class, function(){
-            return new Tomtom(new Http(), env('TOMTOM_API_KEY') );
+        $this->app->bind(TomtomApiClient::class, function(){
+            return new TelegramApiClient(new Http(), env('TOMTOM_API_KEY'));
         });
-
     }
 
     /**
@@ -31,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         //
     }

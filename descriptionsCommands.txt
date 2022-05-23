@@ -1,0 +1,4 @@
+start - начать
+help - помощь
+update_location - обновить геолокацию
+change_radius_search - изменить радиус поиска

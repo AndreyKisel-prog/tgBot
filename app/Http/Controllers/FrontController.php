@@ -4,18 +4,17 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Api\ApiController;
 use Illuminate\Http\Request;
 use App\Services\Telegram\WebhookNewRequestService;
-use Illuminate\Support\Facades\Log;
 
 class FrontController extends ApiController
 {
     /**
-     * получаем обеект апдейта из вебхука (то есть все обновления поступающие от телеграма)
-     *
-     *
+     * * получаем  апдейт из вебхука (то есть все обновления поступающие от телеграма)
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function handleWebhookUpdates(Request $request)
+    public function handleWebhookUpdates(Request $request): \Illuminate\Http\JsonResponse
     {
         (new WebhookNewRequestService($request))->handle();
-        return response()->json(['result' => true], 200);
+        return response()->json();
     }
 }
