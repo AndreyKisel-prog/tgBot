@@ -2,6 +2,7 @@
 
 namespace App\Services\Telegram;
 
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
 use function env;
@@ -26,9 +27,9 @@ class TelegramApiClient
     /**
      * @param string $chatId
      * @param string $message
-     * @return \Illuminate\Http\Client\Response
+     * @return Response
      */
-    public function sendMessage(string $chatId, string $message): \Illuminate\Http\Client\Response
+    public function sendMessage(string $chatId, string $message): Response
     {
         return $this->http::post(
             env('BASE_BOT_URL')
@@ -46,13 +47,13 @@ class TelegramApiClient
      * @param string $chatId
      * @param string $message
      * @param string $button
-     * @return \Illuminate\Http\Client\Response
+     * @return Response
      */
     public function sendButtons(
         string $chatId,
         string $message,
         string $button
-    ): \Illuminate\Http\Client\Response {
+    ): Response {
         return $this->http::post(
             env("BASE_BOT_URL")
             . $this->botToken
@@ -70,13 +71,13 @@ class TelegramApiClient
      * @param string $chatId
      * @param float $latitude
      * @param float $longitude
-     * @return \Illuminate\Http\Client\Response
+     * @return Response
      */
     public function sendLocation(
         string $chatId,
         float $latitude,
         float $longitude
-    ): \Illuminate\Http\Client\Response {
+    ): Response {
         return $this->http::post(
             env("BASE_BOT_URL")
             . $this->botToken

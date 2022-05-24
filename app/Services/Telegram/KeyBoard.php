@@ -33,7 +33,7 @@ class KeyBoard
      * @param array $buttonsOptions
      * @return array[]
      */
-    public function getOnelineKeyboardWithCallback($buttonsOptions): array
+    public function getOnelineKeyboardWithCallback(array $buttonsOptions): array
     {
         // строка с кнопками
         $LineWithButtons = [];

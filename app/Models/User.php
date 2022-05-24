@@ -54,11 +54,10 @@ class User extends Authenticatable
     public static function updateUserLocation(User $user, array $data): void
     {
         $user->update([
-            'last_latitude' => $data['latitude'],
+            'last_latitude'  => $data['latitude'],
             'last_longitude' => $data['longitude']
         ]);
     }
-
 
     /**
      * @param string $nickName
@@ -69,13 +68,12 @@ class User extends Authenticatable
         return self::firstOrCreate(['user_name' => $nickName]);
     }
 
-
     /**
      * @param User $user
      * @param string $searchWord
-     * @return mixed
+     * @return bool
      */
-    public static function setLastSearchWord(User $user,string $searchWord)
+    public static function setLastSearchWord(User $user, string $searchWord)
     {
         return $user->update(['last_search_word' => $searchWord]);
     }
@@ -83,9 +81,9 @@ class User extends Authenticatable
     /**
      * @param User $user
      * @param int $radius
-     * @return mixed
+     * @return bool
      */
-    public static function setLastSearchRadius(User $user,int $radius)
+    public static function setLastSearchRadius(User $user, int $radius)
     {
         return $user->update(['last_search_radius' => $radius]);
     }

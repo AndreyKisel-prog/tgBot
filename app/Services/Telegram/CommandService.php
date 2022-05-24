@@ -3,7 +3,9 @@
 namespace App\Services\Telegram;
 
 use App\Assets\MessageTextToSend;
-use App\Services\Telegram\KeyBoard;
+use App\Models\User;
+use App\Services\Telegram\SearchConditions;
+use Illuminate\Http\Client\Response;
 
 class CommandService extends BaseService
 {
@@ -11,8 +13,7 @@ class CommandService extends BaseService
 
     /** @var string */
     public $command_message;
-    /** @var \App\Services\Telegram\KeyBoard */
-    public $keyboard;
+
 
     public const START = '/start';
     public const HELP = '/help';
@@ -30,7 +31,6 @@ class CommandService extends BaseService
     public function __construct(array $data)
     {
         parent::__construct($data);
-        $this->keyboard        = (new KeyBoard());
         $this->command_message = $data['messageText'];
     }
 
@@ -43,32 +43,26 @@ class CommandService extends BaseService
         return $this->$command();
     }
 
-    /**
-     * @return \Illuminate\Http\Client\Response
-     */
-    public function startCommandHandle(): \Illuminate\Http\Client\Response
+    public function startCommandHandle()
     {
         $message = MessageTextToSend::MESSAGE_TEXT_TYPES['greeting']
             . $this->data['userName']
             . MessageTextToSend::MESSAGE_TEXT_TYPES['intro'];
-        // получаем обьект настроек отправляемой кнопки
-        $inlineKeyboardMarkup = $this->keyboard
-            ->getReplyKeyboardMarkup(
-                $this->keyboard->getKeyboardWithRequestLocation()
-            );
-        // отправляем приветственное сообщение с кнопкой отправки геолокации
-        return $this->telegram()
-            ->sendButtons(
+
+        // отправляем приветственное сообщение
+        $this->telegram()
+            ->sendMessage(
                 $this->data['chatId'],
                 $message,
-                json_encode($inlineKeyboardMarkup)
             );
+        $user = User::getUser($this->data['nickName']);
+        return (new SearchConditions($this->data))->checkConditionsForSearch($user);
     }
 
     /**
-     * @return \Illuminate\Http\Client\Response
+     * @return Response
      */
-    private function helpCommandHandle(): \Illuminate\Http\Client\Response
+    private function helpCommandHandle(): Response
     {
         $message = MessageTextToSend::MESSAGE_TEXT_TYPES['helpAnswer'];
         // отправляем сообщение с реакцией на просьбу о помощи
@@ -77,50 +71,20 @@ class CommandService extends BaseService
     }
 
     /**
-     * @return \Illuminate\Http\Client\Response
+     * обработка команды на обновление локации
+     * @return Response
      */
-    private function updateLocationCommandHandle(): \Illuminate\Http\Client\Response
+    private function updateLocationCommandHandle(): Response
     {
-        $message = MessageTextToSend::MESSAGE_TEXT_TYPES['locationNeed'];
-        // получаем обьект настроек отправляемой кнопки
-        $inlineKeyboardMarkup = $this->keyboard
-            ->getReplyKeyboardMarkup(
-                $this->keyboard
-                    ->getKeyboardWithRequestLocation()
-            );
-        // отправляем сообщение с кнопкой отправки геолокации
-        return $this->telegram()->sendButtons(
-            $this->data['chatId'],
-            $message,
-            json_encode($inlineKeyboardMarkup)
-        );
+        return (new SearchConditions($this->data))->locationNeedQuery();
     }
 
     /**
-     * @return \Illuminate\Http\Client\Response
+     * обработка команды на обновление радиуса
+     * @return Response
      */
-    public function changeRadiusCommandHandle(): \Illuminate\Http\Client\Response
+    public function changeRadiusCommandHandle(): Response
     {
-        $message = MessageTextToSend::MESSAGE_TEXT_TYPES['radiusNeed'];
-        // получаем клавиатуру с кнопками
-        $buttonsOptions = [
-            '1км' => 1000,
-            '3км' => 3000,
-            '5км' => 5000,
-            '7км' => 7000,
-            '9км' => 9000,
-        ];
-        $keyboard       = $this->keyboard
-            ->getOnelineKeyboardWithCallback($buttonsOptions);
-        // общая настройка клавиатуры
-        $inlineKeyboardMarkup = $this->keyboard
-            ->getInlineKeyboardMarkup($keyboard);
-        // отправляем сообщение с кнопками
-        return $this->telegram()
-            ->sendButtons(
-                $this->data['chatId'],
-                $message,
-                json_encode($inlineKeyboardMarkup)
-            );
+        return (new SearchConditions($this->data))->radiusNeedQuery();
     }
 }

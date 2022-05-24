@@ -29,7 +29,8 @@ Route::get('/deleteWebhook', function () {
     $http = Http::get(
         env('BASE_BOT_URL')
         . env('TG_BOT_TOKEN')
-        . '/deleteWebHook?drop_pending_updates=true');
+        . '/deleteWebHook?drop_pending_updates=true'
+    );
     dd(json_decode($http));
 });
 

@@ -4,7 +4,6 @@ namespace App\Services\Telegram;
 
 use App\Transformers\UpdateTelegramTransformer;
 
-
 class WebhookNewRequestService
 {
     public $data;
@@ -52,17 +51,17 @@ class WebhookNewRequestService
             return self::CALLBACK_DATA;
         }
         // TODO: сделать обработку на 'undefined'
-        return 'undefined';
+        return true;
     }
 
     /**
      * @param string $typeUpdate
-     * @return mixed
-     * // вызываем класс обработчик в зависимости от типа апдейта (месадж, команды)
+     *
+     * вызываем класс обработчик в зависимости от типа апдейта (месадж, команды)
      */
     private function handleUpdateByType(string $typeUpdate)
     {
         $webhook_update_type = self::WEBHOOK_UPDATE_TYPES[$typeUpdate];
-        return (new $webhook_update_type($this->data))->handle();
+        (new $webhook_update_type($this->data))->handle();
     }
 }

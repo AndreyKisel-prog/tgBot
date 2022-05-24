@@ -2,6 +2,7 @@
 
 namespace App\Services\Tomtom;
 
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
 use function env;
@@ -24,14 +25,14 @@ class TomtomApiClient
      * @param float $longitude
      * @param string $query
      * @param int $radius
-     * @return \Illuminate\Http\Client\Response
+     * @return Response
      */
     public function fetchPOI(
         float $latitude,
         float $longitude,
         string $query,
         int $radius
-    ): \Illuminate\Http\Client\Response {
+    ): Response {
         return $this->http::get(
             env('BASE_TOMTOM_URL') . $query . '.json',
             [
