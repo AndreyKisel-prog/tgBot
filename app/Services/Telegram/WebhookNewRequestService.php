@@ -2,6 +2,7 @@
 
 namespace App\Services\Telegram;
 
+use App\Http\Requests\TelegramUpdateRequest;
 use App\Transformers\UpdateTelegramTransformer;
 
 class WebhookNewRequestService
@@ -18,17 +19,18 @@ class WebhookNewRequestService
     ];
 
     /**
-     * @param $rawUpdate
+     * @param TelegramUpdateRequest $request
+     * @return void
      */
-    public function __construct($rawUpdate)
+   public function __construct(TelegramUpdateRequest $request)
     {
-        $this->data = (new UpdateTelegramTransformer($rawUpdate->input()))->handle();
+        $this->data = (new UpdateTelegramTransformer($request->input()))->handle();
     }
 
     /**
      * @return void
      */
-    public function handle(): void
+    public function handle()
     {
         $typeUpdate = $this->recognizeTypeUpdate($this->data);
         $this->handleUpdateByType($typeUpdate);
@@ -50,7 +52,6 @@ class WebhookNewRequestService
         if ($data['callbackQueryObj']) {
             return self::CALLBACK_DATA;
         }
-        // TODO: сделать обработку на 'undefined'
         return true;
     }
 
